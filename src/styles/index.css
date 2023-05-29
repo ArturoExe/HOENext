@@ -172,7 +172,7 @@ h4 {
 
 .table-item {
   display: grid;
-  grid-template-columns: 2.25rem repeat(6, 4fr) 2.25rem;
+  grid-template-columns: repeat(6, 4fr) repeat(2, 2.25rem);
   padding: 0.5rem;
   align-items: center;
   justify-items: center;
@@ -320,11 +320,7 @@ h4 {
 
 .hero-section {
   background: rgb(233, 187, 130);
-  background: linear-gradient(
-    90deg,
-    rgba(233, 187, 130, 1) 0%,
-    rgba(233, 211, 184, 0.8240546218487395) 95%
-  );
+  background: linear-gradient(90deg, rgba(233, 187, 130, 1) 0%, rgba(233, 211, 184, 0.8240546218487395) 95%);
 }
 
 .hero-container {
@@ -396,11 +392,7 @@ h4 {
   max-height: 27rem;
   border-radius: 10px;
   background: rgb(233, 187, 130);
-  background: linear-gradient(
-    90deg,
-    rgba(233, 187, 130, 1) 0%,
-    rgba(233, 211, 184, 1) 95%
-  );
+  background: linear-gradient(90deg, rgba(233, 187, 130, 1) 0%, rgba(233, 211, 184, 1) 95%);
   -webkit-box-shadow: 8px 3px 13px 1px rgba(0, 0, 0, 0.31);
   box-shadow: 8px 3px 13px 1px rgba(0, 0, 0, 0.21);
 }
