@@ -14,7 +14,7 @@ body {
 }
 
 main {
-  padding: 2rem 5rem;
+  padding: 1rem 4rem;
 }
 
 /* Buttons */
@@ -27,19 +27,26 @@ main {
   border-radius: 4px;
   border: none;
   background-color: #37493d;
+  white-space: nowrap;
 }
 
 .btn-small {
   padding-block: 0.25rem;
 }
+
+.btn-small {
+  background-color: transparent;
+}
+
 .btn-outline {
   border: 2px solid rgb(80, 179, 80);
   color: rgb(80, 179, 80);
 }
 
-.btn-small,
-.btn-outline {
-  background-color: transparent;
+.btn-outline2 {
+  color: #000;
+  background-color: rgb(93, 203, 93);
+  border: 2px solid rgb(93, 203, 93);
 }
 
 .btn-fixed-width {
@@ -164,10 +171,11 @@ h4 {
 .table {
   background-color: #eae4d5;
   border-radius: 4px;
-  min-height: 70vh;
+  min-height: 75vh;
   position: relative;
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.25);
   margin: 1rem 0;
+  min-width: 62rem;
 }
 
 .table-item {
@@ -176,6 +184,7 @@ h4 {
   padding: 0.5rem;
   align-items: center;
   justify-items: center;
+  grid-gap: 0.5rem;
 }
 
 .table-head {
@@ -266,11 +275,11 @@ h4 {
 /*Estado*/
 
 .citado {
-  background-color: rgb(61, 204, 61);
+  background-color: rgb(93, 203, 93);
 }
 
 .pendiente {
-  background-color: rgb(202, 204, 61);
+  background-color: rgb(201, 203, 93);
 }
 
 .encurso {
@@ -278,7 +287,7 @@ h4 {
 }
 
 .completado {
-  background-color: rgb(208, 208, 208);
+  background-color: rgb(183, 183, 183);
 }
 
 .cancelado {

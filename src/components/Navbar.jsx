@@ -5,8 +5,8 @@ const Navbar = () => {
     <div className="nav-bar">
       <h3>House of Elegance</h3>
       <div>
-        <a href="#">Agendar</a>
-        <a href="#">Otra</a>
+        {/* <a href="#">Agendar</a>
+        <a href="#">Otra</a> */}
         <span>
           <a href="#">Bienvenido! Usuario01</a>
         </span>

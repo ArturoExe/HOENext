@@ -1,11 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { faSquare } from "@fortawesome/free-solid-svg-icons";
 import { faSort } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faCalendar } from "@fortawesome/free-solid-svg-icons";
@@ -15,22 +13,20 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
+import { Dropdown } from "antd";
 import { useForm } from "react-hook-form";
-import { FormDatePicker } from "./FormDatePicker";
-import { FormTimePicker } from "./FormTimePicker";
 import dayjs from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 import { useRouter } from "next/router";
-import { getWeek, getMonth, filterByDateOrRange, resetTimeOnDate, dateExistsInSelected } from "../utils/utils";
+import { useState, useEffect } from "react";
 
+import { getWeek, getMonth, resetTimeOnDate } from "../utils/utils";
 import convertToDateType from "../utils/utils";
-import { Dropdown } from "antd";
 
+import { FormDatePicker } from "./FormDatePicker";
+import { FormTimePicker } from "./FormTimePicker";
 import { TableDatePicker } from "./TableDatePicker";
 import { StatusPicker } from "./StatusPicker";
-
-// import data from "../utils/data"; //temporal mientras se conecta la db
-import { useState, useEffect } from "react";
 
 export default function Table() {
   const [appointments, setAppointments] = useState([]);
@@ -39,6 +35,7 @@ export default function Table() {
   const [search, setSearch] = useState("");
   const { register, handleSubmit, reset, control, setValue } = useForm();
   const [modalType, setModalType] = useState("Crear");
+  const [showCompleted, setShowCompleted] = useState(false);
   const { reload } = useRouter();
   dayjs.extend(updateLocale);
   dayjs.updateLocale("en", {
@@ -217,7 +214,10 @@ export default function Table() {
       if (selectedDateOrRange[1].getTime() - selectedDateOrRange[0].getTime() <= 604800000) {
         const { start, end } = getWeek(new Date(selectedDateOrRange[0].getTime() - 604800000)); //get previous week range
         setSelectedDateOrRange([start, end]);
-      } else {
+      } else if (
+        selectedDateOrRange[1].getTime() - selectedDateOrRange[0].getTime() > 604800000 &&
+        selectedDateOrRange[1].getTime() - selectedDateOrRange[0].getTime() <= 2629800000
+      ) {
         let previousMonth = selectedDateOrRange[0];
         previousMonth.setDate(1);
         previousMonth.setMonth(previousMonth.getMonth() - 1);
@@ -235,7 +235,10 @@ export default function Table() {
       if (selectedDateOrRange[1].getTime() - selectedDateOrRange[0].getTime() <= 604800000) {
         const { start, end } = getWeek(new Date(selectedDateOrRange[0].getTime() + 604800000)); //get next week range
         setSelectedDateOrRange([start, end]);
-      } else {
+      } else if (
+        selectedDateOrRange[1].getTime() - selectedDateOrRange[0].getTime() > 604800000 &&
+        selectedDateOrRange[1].getTime() - selectedDateOrRange[0].getTime() <= 2629800000
+      ) {
         let previousMonth = selectedDateOrRange[0];
         previousMonth.setDate(1);
         previousMonth.setMonth(previousMonth.getMonth() + 1);
@@ -294,7 +297,7 @@ export default function Table() {
           <h3>Hora</h3>
           <h3>Nombre</h3>
           <h3>Servicio</h3>
-          <h3>Telefono</h3>
+          <h3>Teléfono</h3>
           <h3>Estado</h3>
           <div></div>
           <button className="btn btn-small">
@@ -304,6 +307,7 @@ export default function Table() {
 
         {appointments
           .filter(i => {
+            //filter by date selected
             if (selectedDateOrRange.length === 1) {
               return convertToDateType(i.fecha).getTime() === selectedDateOrRange[0].getTime();
             } else if (selectedDateOrRange.length === 2) {
@@ -313,7 +317,12 @@ export default function Table() {
               );
             }
           })
+          .filter(e => {
+            if (e.estado === "Completado" && !showCompleted) return;
+            return e;
+          })
           .filter(
+            //filter by search
             e =>
               e.nombre.toLowerCase().includes(search) ||
               e.telefono.includes(search) ||
@@ -331,7 +340,7 @@ export default function Table() {
                 <p className="small-font">{e.servicio}</p>
                 <p className="small-font">{e.telefono}</p>
                 <Dropdown
-                  className="btn btn-small btn-fixed-width"
+                  className={`btn btn-small btn-fixed-width ${e.estado.toLowerCase().replace(" ", "")}`}
                   trigger={["click"]}
                   placement="bottom"
                   dropdownRender={() => <StatusPicker statusPicked={e.estado} _id={e._id} />}
@@ -361,9 +370,14 @@ export default function Table() {
           })}
 
         <div className="table-footer flex align-bottom">
+          {/* // todo arregar */}
           <p className="small-font">Citas mostradas: {appointments.length}</p>
-          <button className="btn btn-small btn-outline">
-            <p className="small-font">Mostrar completadas</p>
+          <button
+            className={`btn btn-small ${!showCompleted ? "btn-outline" : "btn-outline2"}`}
+            onClick={() => setShowCompleted(!showCompleted)}
+            style={{ minWidth: "12rem", justifyContent: "center" }}
+          >
+            <p className="small-font">{showCompleted ? "Ocultar completadas" : "Mostrar completadas"}</p>
           </button>
         </div>
       </div>
@@ -382,10 +396,18 @@ export default function Table() {
                   <option value="Servicio" disabled hidden>
                     Servicio
                   </option>
+                  <option value="Alisado">Alisado</option>
+                  <option value="Bótox capilar">Bótox capilar</option>
+                  <option value="Colorimetría">Colorimetría</option>
                   <option value="Corte de cabello">Corte de cabello</option>
-                  <option value="Pintura de cabello">Pintura de cabello</option>
-                  <option value="Maquillaje">Maquillaje</option>
-                  <option value="Tinte">Tinte</option>
+                  <option value="Depilación con cera">Depilación con cera</option>
+                  <option value="Depilación con hilo">Depilación con hilo</option>
+                  <option value="Diseño de ceja">Diseño de ceja</option>
+                  <option value="Evento">Evento</option>
+                  <option value="Maquillaje aerográfico">Maquillaje aerográfico</option>
+                  <option value="Maquillaje social">Maquillaje social</option>
+                  <option value="Peinado">Peinado</option>
+                  <option value="Uñas">Uñas</option>
                 </select>
               </div>
               <div className="flex-column column-gap">
