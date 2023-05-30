@@ -36,6 +36,7 @@ export default function Table() {
   const { register, handleSubmit, reset, control, setValue } = useForm();
   const [modalType, setModalType] = useState("Crear");
   const [showCompleted, setShowCompleted] = useState(false);
+  let appointmentCount = "0";
   const { reload } = useRouter();
   dayjs.extend(updateLocale);
   dayjs.updateLocale("en", {
@@ -318,6 +319,7 @@ export default function Table() {
             }
           })
           .filter(e => {
+            //filter completed appointments
             if (e.estado === "Completado" && !showCompleted) return;
             return e;
           })
@@ -331,7 +333,8 @@ export default function Table() {
               e.fecha.toLowerCase().includes(search) ||
               e.hora.toLowerCase().includes(search)
           )
-          .map(e => {
+          .map((e, _, array) => {
+            appointmentCount = array.length.toString();
             return (
               <div key={e._id} className="table-item table-row">
                 <p className="small-font">{e.fecha}</p>
@@ -370,8 +373,7 @@ export default function Table() {
           })}
 
         <div className="table-footer flex align-bottom">
-          {/* // todo arregar */}
-          <p className="small-font">Citas mostradas: {appointments.length}</p>
+          <p className="small-font">Citas mostradas: {appointmentCount}</p>
           <button
             className={`btn btn-small ${!showCompleted ? "btn-outline" : "btn-outline2"}`}
             onClick={() => setShowCompleted(!showCompleted)}
